@@ -9,7 +9,8 @@ def main_menu_keyboard():
             [KeyboardButton(text="📲 Инструкции по настройке"), KeyboardButton(text="⚡ Статус серверов")],
             [KeyboardButton(text="❓ FAQ и Поддержка")]
         ],
-        resize_keyboard=True
+        resize_keyboard=True,
+        is_persistent=True
     )
 
 # Клавиатура выбора тарифа

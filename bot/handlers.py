@@ -215,3 +215,11 @@ async def faq_handler(message: Message):
         f"💬 <b>Служба поддержки:</b> Напишите администратору {SUPPORT_USERNAME}"
     )
     await message.answer(text, parse_mode="HTML")
+
+@router.message()
+async def fallback_any_text_handler(message: Message):
+    text = (
+        "🏰 <b>Главное меню АРКАИМ VPN</b>\n\n"
+        "Выберите нужный раздел на клавиатуре снизу:"
+    )
+    await message.answer(text, reply_markup=main_menu_keyboard(), parse_mode="HTML")
