@@ -1,11 +1,19 @@
 import asyncio
 import logging
+import os
 import sys
 from aiogram import Bot, Dispatcher
+from aiogram.client.session.aiohttp import AiohttpSession
 
 from config import BOT_TOKEN
 from database import init_db
 from handlers import router
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 async def main():
     logging.basicConfig(
@@ -14,27 +22,24 @@ async def main():
         stream=sys.stdout
     )
 
-    if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE" or not BOT_TOKEN:
-        print("\n" + "="*70)
-        print("⚠️ ВНИМАНИЕ: Не забудьте указать BOT_TOKEN в файле bot/config.py!")
-        print("Получите ваш токен бесплатно у бота @BotFather в Telegram.")
-        print("="*70 + "\n")
-
-    # Инициализация базы данных
     await init_db()
 
-    bot = Bot(token=BOT_TOKEN)
+    # Поддержка прокси при необходимости (TELEGRAM_PROXY или HTTPS_PROXY)
+    proxy = os.getenv("TELEGRAM_PROXY") or os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY")
+    session = AiohttpSession(proxy=proxy) if proxy else None
+
+    bot = Bot(token=BOT_TOKEN, session=session) if session else Bot(token=BOT_TOKEN)
     dp = Dispatcher()
     dp.include_router(router)
 
-    print("🚀 Бот АРКАИМ VPN готов к запуску!")
+    print("🚀 Бот АРКАИМ VPN запущен!")
     
-    try:
-        await dp.start_polling(bot)
-    except Exception as e:
-        print(f"Ошибка запуска бота: {e}")
-    finally:
-        await bot.session.close()
+    while True:
+        try:
+            await dp.start_polling(bot)
+        except Exception as e:
+            print(f"Подключение к Telegram API ({e}). Повторная попытка через 5 сек...")
+            await asyncio.sleep(5)
 
 if __name__ == "__main__":
     asyncio.run(main())

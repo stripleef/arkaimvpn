@@ -1,7 +1,7 @@
 import os
 
-# Telegram Bot Token (получите у @BotFather в Telegram)
-BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
+# Telegram Bot Token
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8937409444:AAG7HZ9xIuq0HRS9eXip9XLRfw_QX0rUzzs")
 
 # Названия и настройки тарифов
 TARIFFS = {
