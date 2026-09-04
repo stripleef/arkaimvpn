@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АРКАИМ VPN — Твоя цифровая крепость</title>
+    <meta name="description" content="АРКАИМ VPN — премиальный VPN-сервис. Непробиваемая защита как стены древней крепости. Обход блокировок, анонимность, высокая скорость.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="nav-overlay" id="nav-overlay">
+    <button class="nav-overlay-close" id="nav-close">✕</button>
+    <a href="#hero"      onclick="closeNav()">Главная</a>
+    <a href="#about"     onclick="closeNav()">О сервисе</a>
+    <a href="#whitelist" onclick="closeNav()">Обход блокировок</a>
+    <a href="#pricing"   onclick="closeNav()">Тарифы</a>
+    <a href="#faq"       onclick="closeNav()">FAQ</a>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+    <div class="header-inner">
+        <a href="#hero" class="logo">
+            <svg class="logo-emblem" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="37" stroke="#B87333" stroke-width="1.2" opacity="0.8"/>
+                <circle cx="40" cy="40" r="27" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+                <circle cx="40" cy="40" r="17" stroke="#E8B45A" stroke-width="0.7" opacity="0.4"/>
+                <circle cx="40" cy="40" r="5"  fill="#B87333" opacity="0.9"/>
+                <line x1="40" y1="3"  x2="40" y2="77" stroke="#B87333" stroke-width="0.5" opacity="0.3"/>
+                <line x1="3"  y1="40" x2="77" y2="40" stroke="#B87333" stroke-width="0.5" opacity="0.3"/>
+                <line x1="11" y1="11" x2="69" y2="69" stroke="#B87333" stroke-width="0.4" opacity="0.2"/>
+                <line x1="69" y1="11" x2="11" y2="69" stroke="#B87333" stroke-width="0.4" opacity="0.2"/>
+            </svg>
+            <span class="logo-text">АРКАИМ<span class="sub">VPN</span></span>
+        </a>
+        <nav class="nav" id="nav">
+            <a href="#about">О сервисе</a>
+            <a href="#whitelist">Обход блокировок</a>
+            <a href="#pricing">Тарифы</a>
+            <a href="#setup">Настройка</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+        <a href="#pricing" class="btn-header">Войти в крепость</a>
+        <button class="burger" id="burger" aria-label="Меню">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source src="аркаим.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+
+    <!-- Concentric rings -->
+    <div class="hero-rings">
+        <svg viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+            <circle class="ring ring-1" cx="350" cy="350" r="330"/>
+            <circle class="ring ring-2" cx="350" cy="350" r="270"/>
+            <circle class="ring ring-3" cx="350" cy="350" r="210"/>
+            <circle class="ring ring-4" cx="350" cy="350" r="150"/>
+            <circle class="ring ring-5" cx="350" cy="350" r="90"/>
+            <!-- Radial spokes -->
+            <g class="ring-spoke">
+                <line x1="350" y1="20"  x2="350" y2="680"/>
+                <line x1="20"  y1="350" x2="680" y2="350"/>
+                <line x1="90"  y1="90"  x2="610" y2="610"/>
+                <line x1="610" y1="90"  x2="90"  y2="610"/>
+            </g>
+        </svg>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-badge">Защита эпохи бронзы — мощь цифровой эры</div>
+        <h1 class="hero-title">АРКАИМ VPN</h1>
+        <p class="hero-sub-title">4000 лет защите. Бесконечность — твоей свободе.</p>
+        <p class="hero-typed" id="typed-text"></p>
+        <div class="hero-cta">
+            <a href="#pricing" class="btn-copper magnetic" id="hero-cta-btn">Воздвигнуть крепость</a>
+            <a href="#about"   class="btn-outline magnetic">Узнать больше</a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-num counter" data-target="6000">0</span>
+                <span class="hero-stat-label">Серверов</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num counter" data-target="120">0</span>
+                <span class="hero-stat-label">Стран</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">10</span>
+                <span class="hero-stat-label">Гбит/с</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num counter" data-target="500">0</span>
+                <span class="hero-stat-label">К+ пользователей</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-hint">
+        <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+            <rect x="0.5" y="0.5" width="15" height="23" rx="7.5" stroke="#7A6A52"/>
+            <circle cx="8" cy="7" r="2.5" fill="#B87333" opacity="0.7"/>
+        </svg>
+        <span>Прокрути</span>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section section-dark">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="tag">Хроники крепости</span>
+            <h2 class="section-title">Четыре стены вашей свободы</h2>
+            <div class="divider"></div>
+            <p class="section-sub">Как кольцевые стены Аркаима защищали жителей тысячи лет, так АРКАИМ VPN защищает каждый байт ваших данных.</p>
+        </div>
+        <div class="about-grid">
+            <div class="about-card reveal">
+                <div class="about-icon">🔐</div>
+                <h3 class="about-title">Шифрование AES-256</h3>
+                <p class="about-desc">Военный стандарт шифрования. Ни одна разведка мира не взломала этот алгоритм за разумное время.</p>
+            </div>
+            <div class="about-card reveal" style="transition-delay:.1s">
+                <div class="about-icon">⚡</div>
+                <h3 class="about-title">До 10 Гбит/с</h3>
+                <p class="about-desc">Скорость настоящего воина. Потоковое видео 4K, игры, звонки — без задержек и обрывов.</p>
+            </div>
+            <div class="about-card reveal" style="transition-delay:.2s">
+                <div class="about-icon">👁️</div>
+                <h3 class="about-title">Политика No-Log</h3>
+                <p class="about-desc">Мы не храним ни одной записи о вашей активности. То, чего нет — нельзя передать или взломать.</p>
+            </div>
+            <div class="about-card reveal" style="transition-delay:.3s">
+                <div class="about-icon">🌍</div>
+                <h3 class="about-title">6000+ серверов</h3>
+                <p class="about-desc">120 стран, шесть континентов. Всегда найдётся сервер рядом с нужным вам ресурсом.</p>
+            </div>
+        </div>
+        <div class="badge-row reveal" style="margin-top:48px">
+            <div class="badge-item">
+                <span class="badge-num counter" data-target="99" data-suffix="%">0</span>
+                <span class="badge-label">Аптайм</span>
+            </div>
+            <div class="badge-item">
+                <span class="badge-num counter" data-target="30">0</span>
+                <span class="badge-label">Дней гарантия</span>
+            </div>
+            <div class="badge-item">
+                <span class="badge-num">24/7</span>
+                <span class="badge-label">Поддержка</span>
+            </div>
+            <div class="badge-item">
+                <span class="badge-num">∞</span>
+                <span class="badge-label">Трафик</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHITELIST / BYPASS -->
+<section id="whitelist" class="section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="tag">Пояснительная записка</span>
+            <h2 class="section-title">Принцип работы и режимы</h2>
+            <div class="divider"></div>
+            <p class="section-sub">Краткая памятка по выбору режима подключения и настройке доступа</p>
+        </div>
+        <div class="whitelist-wrap reveal">
+            <div class="wl-grid">
+                <div class="wl-card">
+                    <div class="wl-card-header">
+                        <span class="wl-card-num">01</span>
+                        <h3 class="wl-card-title">Режимы сети</h3>
+                    </div>
+                    <div class="wl-modes-compact">
+                        <div class="wl-mode-item">
+                            <span class="wl-badge">Штатный</span>
+                            <strong>Обычный VPN:</strong> Максимальная скорость до 10 Гбит/с при отсутствии ограничений.
+                        </div>
+                        <div class="wl-mode-item">
+                            <span class="wl-badge highlight">Обход DPI</span>
+                            <strong>Обход глушилок:</strong> Протокол VLESS + Reality маскирует трафик при блокировках ТСПУ.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wl-card">
+                    <div class="wl-card-header">
+                        <span class="wl-card-num">02</span>
+                        <h3 class="wl-card-title">Белые списки</h3>
+                    </div>
+                    <p class="wl-card-desc">
+                        Внесите домены (<strong>Госуслуги, Сбербанк, Т-Банк, Маркетплейсы</strong>) в белый список. 
+                        Трафик к ним пойдёт напрямую — без отключения VPN и блокировок банками.
+                    </p>
+                </div>
+
+                <div class="wl-card">
+                    <div class="wl-card-header">
+                        <span class="wl-card-num">03</span>
+                        <h3 class="wl-card-title">Защита и No-Log</h3>
+                    </div>
+                    <p class="wl-card-desc">
+                        Встроенная функция <strong>Kill Switch</strong> блокирует утечку данных при обрыве сети. 
+                        Серверы не сохраняют логи вашей активности.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section section-dark">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="tag">Дружина</span>
+            <h2 class="section-title">Выбери своё место в крепости</h2>
+            <div class="divider"></div>
+            <p class="section-sub">Три уровня защиты. Один выбор — свобода.</p>
+        </div>
+        <div class="price-grid">
+            <!-- ВОИН -->
+            <div class="price-card reveal">
+                <p class="price-tier">Тариф</p>
+                <h3 class="price-name">ВОИН</h3>
+                <p class="price-period">1 месяц</p>
+                <div class="price-amount"><sup>₽</sup>299<sub>/мес</sub></div>
+                <span class="price-save">Базовая защита</span>
+                <ul class="price-features">
+                    <li>1 устройство</li>
+                    <li>6000+ серверов, 120 стран</li>
+                    <li>Безлимитный трафик</li>
+                    <li>AES-256 шифрование</li>
+                    <li>Обход блокировок РФ</li>
+                </ul>
+                <button class="btn-outline btn-full open-modal" data-plan="ВОИН — 299 ₽/мес">Выбрать</button>
+            </div>
+            <!-- ЖРЕЦ -->
+            <div class="price-card popular reveal" style="transition-delay:.1s">
+                <div class="popular-badge">Популярный</div>
+                <p class="price-tier">Тариф</p>
+                <h3 class="price-name">ЖРЕЦ</h3>
+                <p class="price-period">3 месяца</p>
+                <div class="price-amount"><sup>₽</sup>699<sub>/3 мес</sub></div>
+                <span class="price-save">Экономия 36%</span>
+                <ul class="price-features">
+                    <li>3 устройства</li>
+                    <li>6000+ серверов, 120 стран</li>
+                    <li>Безлимитный трафик</li>
+                    <li>Обход глушилок (Reality)</li>
+                    <li>Белые списки</li>
+                    <li>Kill Switch</li>
+                </ul>
+                <button class="btn-copper btn-full open-modal" data-plan="ЖРЕЦ — 699 ₽/3 мес">Выбрать</button>
+            </div>
+            <!-- ДРУЖИНА -->
+            <div class="price-card reveal" style="transition-delay:.2s">
+                <p class="price-tier">Тариф</p>
+                <h3 class="price-name">ДРУЖИНА</h3>
+                <p class="price-period">1 год</p>
+                <div class="price-amount"><sup>₽</sup>1999<sub>/год</sub></div>
+                <span class="price-save">Экономия 44%</span>
+                <ul class="price-features">
+                    <li>5 устройств</li>
+                    <li>6000+ серверов, 120 стран</li>
+                    <li>Безлимитный трафик</li>
+                    <li>Все протоколы включены</li>
+                    <li>Белые списки + Kill Switch</li>
+                    <li>Приоритетная поддержка</li>
+                    <li>Защита от утечек DNS</li>
+                </ul>
+                <button class="btn-outline btn-full open-modal" data-plan="ДРУЖИНА — 1999 ₽/год">Выбрать</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" class="section section-dark2">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="tag">Инструкции</span>
+            <h2 class="section-title">Настройка за 3 минуты</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="setup-wrap reveal">
+            <div class="stabs">
+                <button class="stab active" data-tab="ios">iOS</button>
+                <button class="stab" data-tab="android">Android</button>
+                <button class="stab" data-tab="windows">Windows</button>
+                <button class="stab" data-tab="macos">macOS</button>
+            </div>
+            <div class="spane active" id="p-ios">
+                <div class="setup-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Скачать приложение</div><div class="step-desc">Установите <strong>Streisand</strong> или <strong>V2Box</strong> из App Store.</div></div></div>
+                <div class="setup-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Получить ключ</div><div class="step-desc">После оплаты вы получите VLESS-ключ в формате <code class="step-code">vless://...</code></div></div></div>
+                <div class="setup-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Импортировать конфигурацию</div><div class="step-desc">В приложении нажмите «+» → «Импорт из буфера» и вставьте ключ. Подключение активируется автоматически.</div></div></div>
+                <div class="setup-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Настроить белые списки</div><div class="step-desc">В настройках выберите «Исключить домены» и добавьте российские сервисы для прямого доступа.</div></div></div>
+            </div>
+            <div class="spane" id="p-android">
+                <div class="setup-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Установить v2rayNG</div><div class="step-desc">Скачайте <strong>v2rayNG</strong> из Google Play или GitHub (APK). Это проверенный клиент для Android.</div></div></div>
+                <div class="setup-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Добавить конфигурацию</div><div class="step-desc">Нажмите «+» → «Импорт из буфера обмена». Вставьте ваш VLESS-ключ.</div></div></div>
+                <div class="setup-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Подключиться</div><div class="step-desc">Нажмите кнопку подключения. Разрешите создание VPN-профиля в системном запросе.</div></div></div>
+                <div class="setup-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Режим обхода глушилок</div><div class="step-desc">При проблемах со скоростью выберите сервер с пометкой «Reality» — он использует протокол обхода ТСПУ.</div></div></div>
+            </div>
+            <div class="spane" id="p-windows">
+                <div class="setup-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Скачать Nekoray</div><div class="step-desc">Установите <strong>Nekoray</strong> или <strong>Hiddify</strong> — современные клиенты с поддержкой VLESS/Reality.</div></div></div>
+                <div class="setup-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Импортировать профиль</div><div class="step-desc">Меню → «Серверы» → «Добавить из буфера». Вставьте ваш ключ и нажмите OK.</div></div></div>
+                <div class="setup-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Запустить туннель</div><div class="step-desc">Нажмите «Включить системный прокси» или выберите режим TUN для полного перехвата трафика.</div></div></div>
+                <div class="setup-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Kill Switch</div><div class="step-desc">В настройках включите «Kill Switch» — при разрыве VPN интернет блокируется для вашей безопасности.</div></div></div>
+            </div>
+            <div class="spane" id="p-macos">
+                <div class="setup-step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Установить Hiddify</div><div class="step-desc">Скачайте <strong>Hiddify</strong> из Mac App Store. Он поддерживает все современные протоколы.</div></div></div>
+                <div class="setup-step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Добавить профиль</div><div class="step-desc">Нажмите «+» → «Добавить из буфера обмена». Вставьте полученный VLESS-ключ.</div></div></div>
+                <div class="setup-step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Настроить исключения</div><div class="step-desc">В разделе «Маршрутизация» добавьте российские домены в исключения для прямого доступа.</div></div></div>
+                <div class="setup-step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Запустить</div><div class="step-desc">Нажмите «Подключить». Иконка в строке меню покажет статус вашего VPN-соединения.</div></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section section-dark">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="tag">Ответы предков</span>
+            <h2 class="section-title">Часто задаваемые вопросы</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item reveal">
+                <button class="faq-q">Работает ли АРКАИМ VPN в России в 2024–2025 году?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Да. Мы используем протокол VLESS+Reality (XTLS), который практически не поддаётся обнаружению системой ТСПУ. Он маскируется под обычный HTTPS-трафик. При необходимости переключайтесь в режим «Обход глушилок».</div></div>
+            </div>
+            <div class="faq-item reveal" style="transition-delay:.05s">
+                <button class="faq-q">Что такое белые списки и зачем они нужны?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Белые списки позволяют указать домены, которые будут работать напрямую, минуя VPN. Это нужно для доступа к российским сервисам (Сбербанк, Госуслуги, Ozon), которые могут блокировать зарубежные IP-адреса.</div></div>
+            </div>
+            <div class="faq-item reveal" style="transition-delay:.10s">
+                <button class="faq-q">Сколько устройств можно подключить одновременно?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Зависит от тарифа: ВОИН — 1 устройство, ЖРЕЦ — 3 устройства, ДРУЖИНА — 5 устройств. Все устройства работают одновременно на одном аккаунте.</div></div>
+            </div>
+            <div class="faq-item reveal" style="transition-delay:.15s">
+                <button class="faq-q">Как быстро я получу ключ после оплаты?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Мгновенно. Ключ генерируется автоматически сразу после подтверждения платежа. Вы увидите его прямо на сайте и получите в Telegram-боте.</div></div>
+            </div>
+            <div class="faq-item reveal" style="transition-delay:.20s">
+                <button class="faq-q">Какие способы оплаты доступны?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Принимаем: СБП (Система Быстрых Платежей), Т-Пэй, криптовалюту (USDT, BTC, ETH) и оплату через Telegram Bot. Все способы анонимны и безопасны.</div></div>
+            </div>
+            <div class="faq-item reveal" style="transition-delay:.25s">
+                <button class="faq-q">Есть ли гарантия возврата денег?<span class="faq-icon">+</span></button>
+                <div class="faq-a"><div class="faq-a-inner">Да, 30 дней без вопросов. Если по какой-либо причине сервис вам не подошёл — напишите в поддержку, и мы вернём деньги в течение 24 часов.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="#hero" class="logo">
+                    <svg class="logo-emblem" viewBox="0 0 80 80" fill="none">
+                        <circle cx="40" cy="40" r="37" stroke="#B87333" stroke-width="1.2" opacity="0.8"/>
+                        <circle cx="40" cy="40" r="27" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+                        <circle cx="40" cy="40" r="17" stroke="#E8B45A" stroke-width="0.7" opacity="0.4"/>
+                        <circle cx="40" cy="40" r="5" fill="#B87333" opacity="0.9"/>
+                    </svg>
+                    <span class="logo-text">АРКАИМ<span class="sub">VPN</span></span>
+                </a>
+                <p>Непробиваемая защита вашего соединения. Как кольцевые стены Аркаима стояли тысячелетия — так и ваша конфиденциальность.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Навигация</h4>
+                <ul>
+                    <li><a href="#about">О сервисе</a></li>
+                    <li><a href="#whitelist">Обход блокировок</a></li>
+                    <li><a href="#pricing">Тарифы</a></li>
+                    <li><a href="#setup">Настройка</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Тарифы</h4>
+                <ul>
+                    <li><a href="#pricing">ВОИН — 299 ₽/мес</a></li>
+                    <li><a href="#pricing">ЖРЕЦ — 699 ₽/3 мес</a></li>
+                    <li><a href="#pricing">ДРУЖИНА — 1999 ₽/год</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Поддержка</h4>
+                <ul>
+                    <li><a href="#">Telegram-бот</a></li>
+                    <li><a href="#">Написать нам</a></li>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span class="footer-copy">© 2025 АРКАИМ VPN. Все права защищены.</span>
+            <div class="footer-legal">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+        <button class="modal-close" id="modal-close">✕</button>
+        <h2 class="modal-title">Оплата доступа</h2>
+        <p class="modal-sub">Выберите удобный способ оплаты</p>
+        <p class="modal-plan-label" id="modal-plan-label"></p>
+
+        <!-- Step 1: choose method -->
+        <div class="modal-step active" id="mstep-1">
+            <div class="pay-methods">
+                <div class="pay-item" data-method="СБП">
+                    <div class="pay-icon">🏦</div>
+                    <div class="pay-name">СБП</div>
+                    <div class="pay-desc">Система быстрых платежей</div>
+                </div>
+                <div class="pay-item" data-method="Т-Пэй">
+                    <div class="pay-icon">💳</div>
+                    <div class="pay-name">Т-Пэй</div>
+                    <div class="pay-desc">Оплата через Т-Банк</div>
+                </div>
+                <div class="pay-item" data-method="Крипта">
+                    <div class="pay-icon">₿</div>
+                    <div class="pay-name">Криптовалюта</div>
+                    <div class="pay-desc">USDT, BTC, ETH</div>
+                </div>
+                <div class="pay-item" data-method="Telegram">
+                    <div class="pay-icon">✈️</div>
+                    <div class="pay-name">Telegram Bot</div>
+                    <div class="pay-desc">Оплата через бот</div>
+                </div>
+            </div>
+            <button class="btn-copper btn-full" id="pay-confirm">Оплатить</button>
+        </div>
+
+        <!-- Step 2: processing -->
+        <div class="modal-step" id="mstep-2">
+            <div class="modal-spinner">
+                <div class="spinner-ring"></div>
+                <p class="spinner-text">Обрабатываем платёж...<br>Генерируем ваш ключ доступа</p>
+            </div>
+        </div>
+
+        <!-- Step 3: key -->
+        <div class="modal-step" id="mstep-3">
+            <div class="key-success">✅ Оплата прошла успешно! Ваш ключ доступа сгенерирован.</div>
+            <div class="key-box" id="key-display"></div>
+            <button class="btn-copper btn-full" id="copy-key">Скопировать ключ</button>
+            <p style="margin-top:12px;font-size:0.78rem;color:var(--stone);text-align:center">Ключ также отправлен в Telegram. Перейдите в раздел «Настройка» для инструкций.</p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
