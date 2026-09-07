@@ -5,23 +5,17 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "8937409444:AAG7HZ9xIuq0HRS9eXip9XLRfw_QX0rUz
 
 # Названия и настройки тарифов
 TARIFFS = {
-    "scout": {
-        "name": "🗡️ Разведчик",
+    "warrior": {
+        "name": "⚔️ ВОИН",
         "duration_days": 30,
-        "price_rub": 149,
-        "desc": "1 месяц | До 10 Гбит/с | 3 устройства | VLESS + Reality"
+        "price_rub": 50,
+        "desc": "1 месяц | 2 устройства | 1 сервер | VLESS + Reality"
     },
-    "guardian": {
-        "name": "🏰 Страж Аркаима",
-        "duration_days": 180,
-        "price_rub": 690,
-        "desc": "6 месяцев | До 10 Гбит/с | 5 устройств | Экономия 25%"
-    },
-    "chief": {
-        "name": "👑 Вождь",
+    "boss": {
+        "name": "👑 БОСС",
         "duration_days": 365,
-        "price_rub": 1190,
-        "desc": "12 месяцев | До 10 Гбит/с | 10 устройств | Выгода 35%"
+        "price_rub": 500,
+        "desc": "1 год | 2 устройства | 1 сервер | Экономия 17%"
     }
 }
 

@@ -45,6 +45,7 @@ async def cmd_start(message: Message):
     await message.answer(welcome_text, reply_markup=main_menu_keyboard(), parse_mode="HTML")
 
 @router.message(F.text == "🛡️ Мой профиль / Ключ")
+@router.message(Command("profile"))
 async def profile_handler(message: Message):
     user_id = message.from_user.id
     user = await db.get_user(user_id)
@@ -83,18 +84,17 @@ async def profile_handler(message: Message):
         f"{key_block}"
     )
 
-    await message.answer(profile_text, parse_mode="HTML")
+    await message.answer(profile_text, reply_markup=main_menu_keyboard(), parse_mode="HTML")
 
 @router.message(F.text == "💳 Купить VPN / Продлить")
+@router.message(Command("buy"))
 async def buy_handler(message: Message):
     text = (
-        "👑 <b>Выберите подходящий тариф крепости АРКАИМ:</b>\n\n"
-        "🗡️ <b>Разведчик (1 мес)</b> — 149 ₽\n"
-        "• 3 устройства | Скорость до 10 Гбит/с\n\n"
-        "🏰 <b>Страж Аркаима (6 мес)</b> — 690 ₽ <i>(Скидка 25%)</i>\n"
-        "• 5 устройств | Приоритетная поддержка\n\n"
-        "👑 <b>Вождь (12 мес)</b> — 1 190 ₽ <i>(Выгода 35%)</i>\n"
-        "• 10 устройств | Максимальный приоритет сети\n"
+        "🏰 <b>Выберите тариф крепости АРКАИМ:</b>\n\n"
+        "⚔️ <b>ВОИН (1 месяц)</b> — 50 ₽\n"
+        "• 2 устройства | 1 сервер | VLESS + Reality\n\n"
+        "👑 <b>БОСС (1 год)</b> — 500 ₽ <i>(Экономия 17%)</i>\n"
+        "• 2 устройства | 1 сервер | Приоритетная поддержка\n"
     )
     await message.answer(text, reply_markup=tariffs_keyboard(), parse_mode="HTML")
 
@@ -154,31 +154,31 @@ async def callback_setup_os(callback: CallbackQuery):
     guides = {
         "ios": (
             "🍏 <b>Инструкция для iOS (iPhone / iPad):</b>\n\n"
-            "1. Установите бесплатное приложение <b>Hiddify</b> или <b>Streisand</b> из App Store.\n"
-            "2. Скопируйте ваш VLESS ключ из раздела «Мой профиль».\n"
-            "3. Откройте приложение и нажмите <b>«Импортировать из буфера» (+)</b>.\n"
-            "4. Включите переключатель защиты. Готово!"
+            "1. Установите бесплатное приложение <b>Incy</b> из App Store.\n"
+            "2. Оплатите тариф и получите вашу <b>персональную ссылку</b> здесь в боте.\n"
+            "3. Откройте <b>Incy</b>, нажмите кнопку <b>«+»</b> справа сверху и вставьте полученную ссылку.\n"
+            "4. Нажмите на добавленный сервер и включите подключение. Готово!"
         ),
         "android": (
             "🤖 <b>Инструкция для Android:</b>\n\n"
-            "1. Установите приложение <b>v2rayNG</b> или <b>Hiddify</b> из Google Play.\n"
-            "2. Скопируйте ваш VLESS ключ из раздела «Мой профиль».\n"
-            "3. В v2rayNG нажмите значок <b>«+»</b> вверху ➡️ <b>«Импорт профиля из буфера обмена»</b>.\n"
-            "4. Нажмите нижнюю кнопку V2Ray для подключения."
+            "1. Установите приложение <b>Incy</b> из Google Play.\n"
+            "2. Оплатите тариф и получите вашу <b>персональную ссылку</b> здесь в боте.\n"
+            "3. Откройте <b>Incy</b>, нажмите кнопку <b>«+»</b> справа сверху и вставьте полученную ссылку.\n"
+            "4. Нажмите на добавленный сервер и включите подключение. Готово!"
         ),
         "windows": (
             "🪟 <b>Инструкция для Windows:</b>\n\n"
-            "1. Скачайте программу <b>v2rayN</b> или <b>Hiddify Desktop</b>.\n"
-            "2. Скопируйте ваш VLESS ключ.\n"
-            "3. Откройте программу ➡️ нажмите <b>Ctrl+V</b> для вставки ключа.\n"
-            "4. Нажмите <b>Connect</b>."
+            "1. Скачайте и установите приложение <b>Incy</b> с официального сайта Incy.\n"
+            "2. Оплатите тариф и получите вашу <b>персональную ссылку</b> здесь в боте.\n"
+            "3. Откройте <b>Incy</b>, нажмите кнопку <b>«+»</b> справа сверху и вставьте полученную ссылку.\n"
+            "4. Нажмите на добавленный сервер и включите подключение. Готово!"
         ),
         "macos": (
             "🍏 <b>Инструкция для macOS:</b>\n\n"
-            "1. Установите <b>Hiddify</b> или <b>V2Box</b> из Mac App Store.\n"
-            "2. Скопируйте VLESS ключ из бота.\n"
-            "3. Импортируйте ключ через клик по иконке в строке меню.\n"
-            "4. Активируйте защиту."
+            "1. Установите <b>Incy</b> из Mac App Store.\n"
+            "2. Оплатите тариф и получите вашу <b>персональную ссылку</b> здесь в боте.\n"
+            "3. Откройте <b>Incy</b>, нажмите кнопку <b>«+»</b> справа сверху и вставьте полученную ссылку.\n"
+            "4. Нажмите на добавленный сервер и включите подключение. Готово!"
         )
     }
 
@@ -200,9 +200,10 @@ async def status_handler(message: Message):
         "🟢 <b>Хельсинки, FI</b> — Ping: 22 ms | Загрузка: 11%\n\n"
         "📊 <b>Аптайм сети:</b> <code>99.99%</code> | <b>Скорость:</b> <code>До 10 Гбит/с</code>"
     )
-    await message.answer(text, parse_mode="HTML")
+    await message.answer(text, reply_markup=main_menu_keyboard(), parse_mode="HTML")
 
 @router.message(F.text == "❓ FAQ и Поддержка")
+@router.message(Command("help"))
 async def faq_handler(message: Message):
     text = (
         "❓ <b>Часто задаваемые вопросы:</b>\n\n"
@@ -214,7 +215,7 @@ async def faq_handler(message: Message):
         "A: Серверы работают в режиме No-Log, записи не ведутся.\n\n"
         f"💬 <b>Служба поддержки:</b> Напишите администратору {SUPPORT_USERNAME}"
     )
-    await message.answer(text, parse_mode="HTML")
+    await message.answer(text, reply_markup=main_menu_keyboard(), parse_mode="HTML")
 
 @router.message()
 async def fallback_any_text_handler(message: Message):

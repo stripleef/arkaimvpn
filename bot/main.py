@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
 from aiogram.client.session.aiohttp import AiohttpSession
 
 from config import BOT_TOKEN
@@ -24,13 +25,20 @@ async def main():
 
     await init_db()
 
-    # Поддержка прокси при необходимости (TELEGRAM_PROXY или HTTPS_PROXY)
-    proxy = os.getenv("TELEGRAM_PROXY") or os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY")
-    session = AiohttpSession(proxy=proxy) if proxy else None
-
-    bot = Bot(token=BOT_TOKEN, session=session) if session else Bot(token=BOT_TOKEN)
+    bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
     dp.include_router(router)
+
+    try:
+        await bot.set_my_commands([
+            BotCommand(command="start", description="Главное меню"),
+            BotCommand(command="profile", description="Мой профиль / Ключ"),
+            BotCommand(command="buy", description="Купить VPN / Продлить"),
+            BotCommand(command="help", description="FAQ и Поддержка")
+        ])
+        print("✅ Системные команды бота установлены!")
+    except Exception as e:
+        print(f"⚠️ Не удалось установить команды меню: {e}")
 
     print("🚀 Бот АРКАИМ VPN запущен!")
     
