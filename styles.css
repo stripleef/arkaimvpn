@@ -268,7 +268,13 @@ img { display: block; max-width: 100%; }
 .step-body { flex: 1; }
 .step-title { font-weight: 600; color: var(--parch); margin-bottom: 3px; font-size: 0.9rem; }
 .step-desc { font-size: 0.82rem; color: var(--stone-l); line-height: 1.6; }
+.step-desc a { color: var(--copper-l); text-decoration: underline; transition: color 0.2s; }
+.step-desc a:hover { color: var(--amber); }
 .step-code { display: inline-block; margin-top: 6px; padding: 5px 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(184,115,51,0.15); border-radius: 5px; font-family: monospace; font-size: 0.8rem; color: var(--amber); }
+.app-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 7px 14px; background: rgba(184,115,51,0.12); border: 1px solid rgba(184,115,51,0.3); border-radius: 8px; color: var(--parch); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.3s var(--ease); }
+.app-btn:hover { background: rgba(184,115,51,0.25); border-color: var(--copper); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(184,115,51,0.25); }
+.app-btn.tg-btn { background: rgba(42,171,238,0.12); border-color: rgba(42,171,238,0.3); color: #38bdf8; }
+.app-btn.tg-btn:hover { background: rgba(42,171,238,0.25); border-color: #38bdf8; color: #ffffff; box-shadow: 0 4px 16px rgba(42,171,238,0.25); }
 
 /* FAQ */
 .faq-list { max-width: 760px; margin: 0 auto; }
