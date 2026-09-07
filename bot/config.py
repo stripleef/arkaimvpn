@@ -9,13 +9,13 @@ TARIFFS = {
         "name": "⚔️ ВОИН",
         "duration_days": 30,
         "price_rub": 50,
-        "desc": "1 месяц | 2 устройства | 1 сервер | VLESS + Reality"
+        "desc": "1 месяц | 2 устройства | VLESS + Reality"
     },
     "boss": {
         "name": "👑 БОСС",
         "duration_days": 365,
         "price_rub": 500,
-        "desc": "1 год | 2 устройства | 1 сервер | Экономия 17%"
+        "desc": "1 год | 2 устройства | Экономия 17%"
     }
 }
 

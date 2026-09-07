@@ -92,9 +92,9 @@ async def buy_handler(message: Message):
     text = (
         "🏰 <b>Выберите тариф крепости АРКАИМ:</b>\n\n"
         "⚔️ <b>ВОИН (1 месяц)</b> — 50 ₽\n"
-        "• 2 устройства | 1 сервер | VLESS + Reality\n\n"
+        "• 2 устройства | VLESS + Reality\n\n"
         "👑 <b>БОСС (1 год)</b> — 500 ₽ <i>(Экономия 17%)</i>\n"
-        "• 2 устройства | 1 сервер | Приоритетная поддержка\n"
+        "• 2 устройства | Приоритетная поддержка\n"
     )
     await message.answer(text, reply_markup=tariffs_keyboard(), parse_mode="HTML")
 
