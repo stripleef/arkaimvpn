@@ -311,12 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyKeyBtn = document.getElementById('copy-key');
 
     let selectedMethod = 'СБП';
+    let currentModalPlan = 'warrior';
 
     document.querySelectorAll('.open-modal').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const planName = btn.dataset.plan || 'Доступ к Крепости';
-            const price = btn.dataset.price || '149 ₽';
+            const price = btn.dataset.price || '50 ₽';
+            currentModalPlan = (planName.toLowerCase().includes('босс') || planName.toLowerCase().includes('boss')) ? 'boss' : 'warrior';
             if (modalPlanLabel) modalPlanLabel.textContent = `Тариф: ${planName} — ${price}`;
             
             if (mstep1) mstep1.classList.add('active');
@@ -349,18 +351,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (payConfirmBtn) {
-        payConfirmBtn.addEventListener('click', () => {
+        payConfirmBtn.addEventListener('click', async () => {
             if (mstep1) mstep1.classList.remove('active');
             if (mstep2) mstep2.classList.add('active');
 
-            setTimeout(() => {
-                const randomHash = Math.random().toString(36).substring(2, 14);
-                const generatedVlessKey = `vless://${randomHash}@node1.arkaim-vpn.net:443?security=reality&type=grpc&sni=gateway.arkaim.ru#АРКАИМ_VPN_Ключ`;
-                if (keyDisplay) keyDisplay.textContent = generatedVlessKey;
+            try {
+                let user = null;
+                if (typeof getCurrentUser === 'function') {
+                    user = await getCurrentUser();
+                }
+
+                let finalKey = '';
+                if (user && typeof createSubscription === 'function') {
+                    // Запись в Supabase БД для авторизованного пользователя
+                    const subRes = await createSubscription(user.id, currentModalPlan, selectedMethod);
+                    finalKey = subRes.vpnKey;
+                } else if (typeof generateVlessKey === 'function') {
+                    finalKey = generateVlessKey();
+                } else {
+                    const randomHash = Math.random().toString(36).substring(2, 14);
+                    finalKey = `vless://${randomHash}@node1.arkaim-vpn.net:443?security=reality&type=grpc&sni=gateway.arkaim.ru#АРКАИМ_VPN_Ключ`;
+                }
+
+                if (keyDisplay) {
+                    keyDisplay.textContent = finalKey;
+                }
+
+                // Добавляем подсказку или кнопку перехода в ЛК
+                const mstep3Extra = document.getElementById('mstep-3-extra');
+                if (!mstep3Extra && mstep3) {
+                    const extraDiv = document.createElement('div');
+                    extraDiv.id = 'mstep-3-extra';
+                    extraDiv.style.marginTop = '16px';
+                    extraDiv.style.textAlign = 'center';
+                    if (user) {
+                        extraDiv.innerHTML = `<p style="color:#2ecc71; font-size:0.85rem; margin-bottom:10px;">✓ Подписка сохранена в базу данных Supabase!</p><a href="account.html" class="btn-copper" style="display:inline-block; padding:8px 20px; font-size:0.82rem;">Открыть личный кабинет</a>`;
+                    } else {
+                        extraDiv.innerHTML = `<p style="color:var(--stone-l); font-size:0.8rem; margin-bottom:10px;">Сохраните ключ в личном кабинете, чтобы не потерять доступ:</p><a href="account.html?plan=${currentModalPlan}" class="btn-outline" style="display:inline-block; padding:8px 20px; font-size:0.82rem;">Войти или создать аккаунт</a>`;
+                    }
+                    mstep3.appendChild(extraDiv);
+                }
 
                 if (mstep2) mstep2.classList.remove('active');
                 if (mstep3) mstep3.classList.add('active');
-            }, 1800);
+            } catch (err) {
+                console.error('Ошибка платежа:', err);
+                if (mstep2) mstep2.classList.remove('active');
+                if (mstep1) mstep1.classList.add('active');
+                alert('Ошибка при обработке: ' + (err.message || 'Попробуйте снова'));
+            }
         });
     }
 
