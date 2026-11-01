@@ -32,20 +32,19 @@ function normalizeEmail(input) {
     let s = String(input || '').trim().toLowerCase();
     if (!s) return '';
     if (!s.includes('@')) {
-        // Очищаем спецсимволы
         const clean = s.replace(/[^a-z0-9._-]/gi, '_');
-        return `${clean || 'user'}@arkaim-vpn.net`;
+        return `${clean || 'user'}@arkaim.ru`;
     }
     return s;
 }
 
 // Supabase требует пароль не менее 6 символов.
-// Если пользователь вводит '1212', автоматически дополняем до '121200'
+// Если пользователь вводит '1212', дополняем до 6 символов ('121212')
 function normalizePassword(pwd) {
     let p = String(pwd || '');
     if (!p) return '';
     if (p.length < 6) {
-        return p.padEnd(6, '0');
+        return p.repeat(Math.ceil(6 / p.length)).slice(0, 6);
     }
     return p;
 }
@@ -96,7 +95,7 @@ async function registerUser(rawEmail, rawPassword, displayName) {
         });
 
         if (error) {
-            // Если такой пользователь уже есть - пробуем войти под ним
+            // Если пользователь уже зарегистрирован — сразу пробуем войти
             if (error.message.toLowerCase().includes('already registered')) {
                 const autoLogin = await loginUser(rawEmail, rawPassword);
                 if (autoLogin.success) {
@@ -106,7 +105,7 @@ async function registerUser(rawEmail, rawPassword, displayName) {
             return { success: false, error: getAuthErrorMessage(error.message) };
         }
 
-        // Если создался пользователь - гарантируем запись в profiles
+        // Гарантируем запись в profiles
         if (data?.user) {
             try {
                 await sb.from('profiles').upsert({
@@ -126,22 +125,17 @@ async function registerUser(rawEmail, rawPassword, displayName) {
             return { success: true, user: data.user, session: data.session };
         }
 
-        // Пробуем мгновенный вход
-        const tryLogin = await sb.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-        if (tryLogin.data?.session) {
-            return { success: true, user: tryLogin.data.user, session: tryLogin.data.session };
+        // Пробуем войти
+        const tryLogin = await loginUser(rawEmail, rawPassword);
+        if (tryLogin.success) {
+            return tryLogin;
         }
 
-        // Если Confirm email включен в Supabase
         return {
             success: true,
             user: data.user,
             needsConfirm: true,
-            message: 'Пользователь успешно создан в базе Supabase! Отключите "Confirm email" в настройках Supabase для мгновенного входа.'
+            message: 'Пользователь успешно создан в базе Supabase!'
         };
 
     } catch (err) {
@@ -153,29 +147,54 @@ async function loginUser(rawEmail, rawPassword) {
     const sb = getSupabase();
     if (!sb) return { success: false, error: 'Подключение к базе данных Supabase не готово' };
 
-    const email = normalizeEmail(rawEmail);
-    const password = normalizePassword(rawPassword);
-
-    try {
-        const { data, error } = await sb.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-        if (error) return { success: false, error: getAuthErrorMessage(error.message) };
-
-        if (data?.user) {
-            try {
-                await sb.from('profiles').update({
-                    last_login: new Date().toISOString()
-                }).eq('id', data.user.id);
-            } catch (e) {}
-        }
-
-        return { success: true, user: data.user, session: data.session };
-    } catch (err) {
-        return { success: false, error: 'Произошла ошибка при входе. Попробуйте снова' };
+    const p = String(rawPassword || '');
+    const pwdCandidates = [p];
+    if (p.length < 6) {
+        pwdCandidates.push(p.repeat(Math.ceil(6 / p.length)).slice(0, 6)); // '1212' -> '121212'
+        pwdCandidates.push(p.padEnd(6, '0'));                             // '1212' -> '121200'
     }
+
+    const raw = String(rawEmail || '').trim();
+    const emailCandidates = [];
+    if (raw.includes('@')) {
+        emailCandidates.push(raw.toLowerCase());
+    } else {
+        const clean = raw.toLowerCase().replace(/[^a-z0-9._-]/gi, '_');
+        emailCandidates.push(`${clean}@arkaim.ru`);
+        emailCandidates.push(`${clean}@arkaim-vpn.net`);
+    }
+
+    let lastError = null;
+
+    // Перебираем варианты (например, логин Veb-tec как @arkaim.ru и пароль 1212 как 121212)
+    for (const email of emailCandidates) {
+        for (const pwd of pwdCandidates) {
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({
+                    email: email,
+                    password: pwd
+                });
+
+                if (!error && data?.user) {
+                    try {
+                        await sb.from('profiles').update({
+                            last_login: new Date().toISOString()
+                        }).eq('id', data.user.id);
+                    } catch (e) {}
+
+                    return { success: true, user: data.user, session: data.session };
+                }
+
+                if (error) {
+                    lastError = error;
+                }
+            } catch (err) {
+                lastError = err;
+            }
+        }
+    }
+
+    return { success: false, error: getAuthErrorMessage(lastError?.message) };
 }
 
 async function logoutUser() {
@@ -404,7 +423,7 @@ function getAuthErrorMessage(msg) {
     if (!msg) return 'Произошла ошибка. Попробуйте снова';
     const lower = msg.toLowerCase();
     if (lower.includes('email logins are disabled') || lower.includes('email signups are disabled') || lower.includes('email_provider_disabled')) {
-        return '⚠️ В панели Supabase отключен провайдер Email! Зайдите в Authentication -> Providers -> Email и включите тумблер "Enable Email provider" (а тумблер "Confirm email" оставьте выключенным).';
+        return '⚠️ В панели Supabase отключен провайдер Email! Зайдите в Authentication -> Providers -> Email и включите тумблер "Enable Email provider".';
     }
     if (lower.includes('rate limit')) {
         return '⚠️ Исчерпан лимит отправки email Supabase. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы пользователи создавались мгновенно!';
