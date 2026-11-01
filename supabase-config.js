@@ -24,11 +24,31 @@ const supabaseClient = getSupabase();
 window.supabaseClient = supabaseClient;
 
 // =========================================================================
-// DATABASE SCHEMA (3 таблицы PostgreSQL):
-// 1. PROFILES (profiles) — профиль пользователя (id, email, display_name, plan, avatar_color, created_at, last_login)
-// 2. SUBSCRIPTIONS (subscriptions) — подписки (id, user_id, plan, plan_label, status, vpn_key, start_date, end_date, devices_limit, created_at)
-// 3. PAYMENTS (payments) — история платежей (id, user_id, subscription_id, amount, currency, method, status, description, created_at)
+// HELPERS ДЛЯ УДОБСТВА: ЛОГИНЫ И ПАРОЛИ ЛЮБОЙ ДЛИНЫ
 // =========================================================================
+
+// Преобразует никнейм/логин без '@' в валидный email для Supabase Auth
+function normalizeEmail(input) {
+    let s = String(input || '').trim().toLowerCase();
+    if (!s) return '';
+    if (!s.includes('@')) {
+        // Очищаем спецсимволы
+        const clean = s.replace(/[^a-z0-9._-]/gi, '_');
+        return `${clean || 'user'}@arkaim-vpn.net`;
+    }
+    return s;
+}
+
+// Supabase требует пароль не менее 6 символов.
+// Если пользователь вводит '1212', автоматически дополняем до '121200'
+function normalizePassword(pwd) {
+    let p = String(pwd || '');
+    if (!p) return '';
+    if (p.length < 6) {
+        return p.padEnd(6, '0');
+    }
+    return p;
+}
 
 // Helper: Generate a VLESS key
 function generateVlessKey() {
@@ -58,28 +78,41 @@ async function getCurrentUser() {
     }
 }
 
-async function registerUser(email, password, displayName) {
+async function registerUser(rawEmail, rawPassword, displayName) {
     const sb = getSupabase();
     if (!sb) return { success: false, error: 'Подключение к базе данных Supabase не готово' };
+
+    const email = normalizeEmail(rawEmail);
+    const password = normalizePassword(rawPassword);
+    const finalName = String(displayName || '').trim() || String(rawEmail || '').trim() || 'Воин';
 
     try {
         const { data, error } = await sb.auth.signUp({
             email: email,
             password: password,
             options: {
-                data: { display_name: displayName }
+                data: { display_name: finalName }
             }
         });
 
-        if (error) return { success: false, error: getAuthErrorMessage(error.message) };
+        if (error) {
+            // Если такой пользователь уже есть - пробуем войти под ним
+            if (error.message.toLowerCase().includes('already registered')) {
+                const autoLogin = await loginUser(rawEmail, rawPassword);
+                if (autoLogin.success) {
+                    return autoLogin;
+                }
+            }
+            return { success: false, error: getAuthErrorMessage(error.message) };
+        }
 
+        // Если создался пользователь - гарантируем запись в profiles
         if (data?.user) {
-            // Гарантируем создание записи в profiles
             try {
                 await sb.from('profiles').upsert({
                     id: data.user.id,
-                    email: data.user.email,
-                    display_name: displayName || data.user.email.split('@')[0],
+                    email: email,
+                    display_name: finalName,
                     plan: 'free',
                     avatar_color: '#B87333'
                 }, { onConflict: 'id' });
@@ -88,15 +121,40 @@ async function registerUser(email, password, displayName) {
             }
         }
 
-        return { success: true, user: data.user, session: data.session };
+        // Если сессия сразу выдана
+        if (data?.session) {
+            return { success: true, user: data.user, session: data.session };
+        }
+
+        // Пробуем мгновенный вход
+        const tryLogin = await sb.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (tryLogin.data?.session) {
+            return { success: true, user: tryLogin.data.user, session: tryLogin.data.session };
+        }
+
+        // Если Confirm email включен в Supabase
+        return {
+            success: true,
+            user: data.user,
+            needsConfirm: true,
+            message: 'Пользователь успешно создан в базе Supabase! Отключите "Confirm email" в настройках Supabase для мгновенного входа.'
+        };
+
     } catch (err) {
-        return { success: false, error: 'Произошла ошибка при регистрации. Попробуйте снова' };
+        return { success: false, error: err.message || 'Произошла ошибка при регистрации' };
     }
 }
 
-async function loginUser(email, password) {
+async function loginUser(rawEmail, rawPassword) {
     const sb = getSupabase();
     if (!sb) return { success: false, error: 'Подключение к базе данных Supabase не готово' };
+
+    const email = normalizeEmail(rawEmail);
+    const password = normalizePassword(rawPassword);
 
     try {
         const { data, error } = await sb.auth.signInWithPassword({
@@ -124,18 +182,18 @@ async function logoutUser() {
     const sb = getSupabase();
     if (!sb) return { success: false };
     try {
-        const { error } = await sb.auth.signOut();
-        if (error) return { success: false, error: error.message };
+        await sb.auth.signOut();
         return { success: true };
     } catch (err) {
         return { success: false, error: err.message };
     }
 }
 
-async function resetPassword(email) {
+async function resetPassword(rawEmail) {
     const sb = getSupabase();
     if (!sb) return { success: false, error: 'Подключение к базе данных не готово' };
     try {
+        const email = normalizeEmail(rawEmail);
         const redirectUrl = window.location.origin + window.location.pathname;
         const { error } = await sb.auth.resetPasswordForEmail(email, {
             redirectTo: redirectUrl
@@ -197,7 +255,6 @@ async function createSubscription(userId, rawPlan, method) {
     if (!sb) throw new Error('Supabase клиент не инициализирован');
     if (!userId) throw new Error('Необходимо войти в аккаунт');
 
-    // Определяем тариф: 'warrior' или 'boss'
     const planStr = String(rawPlan || '').toLowerCase();
     const plan = (planStr.includes('boss') || planStr.includes('босс')) ? 'boss' : 'warrior';
 
@@ -346,12 +403,16 @@ async function getUserPayments(userId) {
 function getAuthErrorMessage(msg) {
     if (!msg) return 'Произошла ошибка. Попробуйте снова';
     const lower = msg.toLowerCase();
-    if (lower.includes('invalid login credentials') || lower.includes('invalid grant')) return 'Неверный email или пароль';
-    if (lower.includes('email not confirmed')) return 'Email не подтверждён. Проверьте почту или отключите Confirm Email в настройках Supabase Auth';
-    if (lower.includes('user already registered') || lower.includes('already exists')) return 'Пользователь с таким email уже зарегистрирован';
-    if (lower.includes('invalid email')) return 'Некорректный формат email';
-    if (lower.includes('weak password') || lower.includes('at least')) return 'Пароль слишком простой (минимум 6 символов)';
-    if (lower.includes('rate limit')) return 'Слишком много запросов. Подождите немного и повторите';
+    if (lower.includes('rate limit')) {
+        return '⚠️ Исчерпан лимит отправки email Supabase. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы пользователи создавались мгновенно!';
+    }
+    if (lower.includes('email not confirmed')) {
+        return '⚠️ Email не подтверждён. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы входить сразу.';
+    }
+    if (lower.includes('invalid login credentials') || lower.includes('invalid grant')) return 'Неверный логин или пароль';
+    if (lower.includes('user already registered') || lower.includes('already exists')) return 'Пользователь с таким логином уже зарегистрирован. Попробуйте войти';
+    if (lower.includes('invalid email')) return 'Некорректный формат логина или email';
+    if (lower.includes('weak password') || lower.includes('at least')) return 'Пароль слишком простой';
     if (lower.includes('network') || lower.includes('fetch')) return 'Ошибка сети. Проверьте подключение к интернету';
     return msg;
 }

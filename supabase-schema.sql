@@ -134,3 +134,51 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+
+-- ===== АВТОМАТИЧЕСКОЕ ПОДТВЕРЖДЕНИЕ EMAIL ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ =====
+-- Позволяет входить сразу после регистрации без ожидания письма
+UPDATE auth.users SET email_confirmed_at = NOW() WHERE email_confirmed_at IS NULL;
+
+CREATE OR REPLACE FUNCTION public.auto_confirm_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.email_confirmed_at = COALESCE(NEW.email_confirmed_at, NOW());
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_auto_confirm ON auth.users;
+CREATE TRIGGER on_auth_user_auto_confirm
+    BEFORE INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.auto_confirm_new_user();
+
+-- ===== СОЗДАНИЕ ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ Veb-tec (ПАРОЛЬ 1212) =====
+DO $$
+DECLARE
+    new_user_id UUID := gen_random_uuid();
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'veb-tec@arkaim-vpn.net') THEN
+        INSERT INTO auth.users (
+            instance_id, id, aud, role, email, encrypted_password,
+            email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+            created_at, updated_at
+        ) VALUES (
+            '00000000-0000-0000-0000-000000000000',
+            new_user_id,
+            'authenticated',
+            'authenticated',
+            'veb-tec@arkaim-vpn.net',
+            crypt('121200', gen_salt('bf')),
+            NOW(),
+            '{"provider":"email","providers":["email"]}',
+            '{"display_name":"Veb-tec"}',
+            NOW(),
+            NOW()
+        );
+
+        INSERT INTO public.profiles (id, email, display_name, plan, avatar_color)
+        VALUES (new_user_id, 'veb-tec@arkaim-vpn.net', 'Veb-tec', 'warrior', '#B87333')
+        ON CONFLICT (id) DO NOTHING;
+    END IF;
+END $$;

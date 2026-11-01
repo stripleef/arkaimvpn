@@ -252,9 +252,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert.textContent = result.error;
         } else if (result.session && result.user) {
             await handleAuthState(result.user);
-        } else if (result.user) {
+        } else if (result.needsConfirm) {
             alert.className = 'auth-alert success';
-            alert.textContent = 'Аккаунт успешно создан! Если включено подтверждение email, проверьте ваш почтовый ящик для входа.';
+            alert.textContent = result.message || 'Аккаунт успешно создан в базе Supabase!';
+        } else if (result.user) {
+            await handleAuthState(result.user);
         }
     });
 
