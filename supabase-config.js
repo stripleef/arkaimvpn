@@ -148,11 +148,12 @@ async function loginUser(rawEmail, rawPassword) {
     if (!sb) return { success: false, error: 'Подключение к базе данных Supabase не готово' };
 
     const p = String(rawPassword || '');
-    const pwdCandidates = [p];
+    const pwdCandidates = [];
     if (p.length < 6) {
         pwdCandidates.push(p.repeat(Math.ceil(6 / p.length)).slice(0, 6)); // '1212' -> '121212'
         pwdCandidates.push(p.padEnd(6, '0'));                             // '1212' -> '121200'
     }
+    pwdCandidates.push(p);
 
     const raw = String(rawEmail || '').trim();
     const emailCandidates = [];
@@ -161,12 +162,11 @@ async function loginUser(rawEmail, rawPassword) {
     } else {
         const clean = raw.toLowerCase().replace(/[^a-z0-9._-]/gi, '_');
         emailCandidates.push(`${clean}@arkaim.ru`);
-        emailCandidates.push(`${clean}@arkaim-vpn.net`);
     }
 
     let lastError = null;
 
-    // Перебираем варианты (например, логин Veb-tec как @arkaim.ru и пароль 1212 как 121212)
+    // Перебираем варианты (логин Veb-tec как @arkaim.ru и пароль 1212 как 121212)
     for (const email of emailCandidates) {
         for (const pwd of pwdCandidates) {
             try {
@@ -422,6 +422,9 @@ async function getUserPayments(userId) {
 function getAuthErrorMessage(msg) {
     if (!msg) return 'Произошла ошибка. Попробуйте снова';
     const lower = msg.toLowerCase();
+    if (lower.includes('database error querying schema')) {
+        return 'Ошибка сессии базы данных. Попробуйте обновить страницу (Ctrl+F5) или войти снова.';
+    }
     if (lower.includes('email logins are disabled') || lower.includes('email signups are disabled') || lower.includes('email_provider_disabled')) {
         return '⚠️ В панели Supabase отключен провайдер Email! Зайдите в Authentication -> Providers -> Email и включите тумблер "Enable Email provider".';
     }
@@ -429,7 +432,7 @@ function getAuthErrorMessage(msg) {
         return '⚠️ Исчерпан лимит отправки email Supabase. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы пользователи создавались мгновенно!';
     }
     if (lower.includes('email not confirmed')) {
-        return '⚠️ Email не подтверждён. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы входить сразу.';
+        return '⚠️ Email не подтверждён. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email) или подтвердите почту.';
     }
     if (lower.includes('invalid login credentials') || lower.includes('invalid grant')) return 'Неверный логин или пароль';
     if (lower.includes('user already registered') || lower.includes('already exists')) return 'Пользователь с таким логином уже зарегистрирован. Попробуйте войти';

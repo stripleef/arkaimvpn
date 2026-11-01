@@ -187,6 +187,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     tabLogin?.addEventListener('click', () => showAuthCard(authLogin));
     tabRegister?.addEventListener('click', () => showAuthCard(authRegister));
+    document.getElementById('tab-register-btn')?.addEventListener('click', () => showAuthCard(authRegister));
+    document.getElementById('tab-login-btn')?.addEventListener('click', () => showAuthCard(authLogin));
+    document.getElementById('tab-login-from-reg')?.addEventListener('click', () => showAuthCard(authLogin));
+    document.getElementById('tab-reg-from-reg')?.addEventListener('click', () => showAuthCard(authRegister));
 
     document.getElementById('show-register')?.addEventListener('click', (e) => {
         e.preventDefault();

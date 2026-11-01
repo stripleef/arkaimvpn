@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет — АРКАИМ VPN</title>
     <meta name="description" content="Личный кабинет АРКАИМ VPN — управление подпиской, VPN-ключами и историей платежей.">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="account.css">
+    <link rel="stylesheet" href="styles.css?v=12">
+    <link rel="stylesheet" href="account.css?v=12">
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -56,13 +56,8 @@
 <!-- ===== AUTH: LOGIN / REGISTER / FORGOT ===== -->
 <section class="auth-section" id="auth-section">
     <div class="auth-container">
-        <!-- TABS -->
-        <div class="auth-tabs" id="auth-tabs">
-            <button type="button" class="auth-tab active" id="tab-login">Вход в крепость</button>
-            <button type="button" class="auth-tab" id="tab-register">Создать аккаунт</button>
-        </div>
 
-        <!-- LOGIN -->
+        <!-- LOGIN CARD -->
         <div class="auth-card" id="auth-login">
             <div class="auth-header">
                 <a href="index.html" class="auth-logo-link">
@@ -76,6 +71,12 @@
                 </a>
                 <h1 class="auth-title">Вход в крепость</h1>
                 <p class="auth-subtitle">Войдите в личный кабинет АРКАИМ VPN</p>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tabs" id="auth-tabs-login" style="display:flex; gap:8px; background:rgba(0,0,0,0.4); padding:4px; border-radius:12px; border:1px solid rgba(184,115,51,0.2); margin-bottom:24px;">
+                <button type="button" class="auth-tab active" id="tab-login-btn" style="flex:1; padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:0.85rem; background:linear-gradient(135deg, #B87333, #8B5A2B); color:#080604;">Вход</button>
+                <button type="button" class="auth-tab" id="tab-register-btn" style="flex:1; padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; background:transparent; color:#A0988A;">Регистрация</button>
             </div>
 
             <div class="auth-alert" id="login-alert"></div>
@@ -103,7 +104,7 @@
             </div>
         </div>
 
-        <!-- REGISTER -->
+        <!-- REGISTER CARD -->
         <div class="auth-card" id="auth-register" style="display:none">
             <div class="auth-header">
                 <a href="index.html" class="auth-logo-link">
@@ -117,6 +118,12 @@
                 </a>
                 <h1 class="auth-title">Регистрация</h1>
                 <p class="auth-subtitle">Создайте аккаунт и присоединитесь к крепости</p>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tabs" id="auth-tabs-reg" style="display:flex; gap:8px; background:rgba(0,0,0,0.4); padding:4px; border-radius:12px; border:1px solid rgba(184,115,51,0.2); margin-bottom:24px;">
+                <button type="button" class="auth-tab" id="tab-login-from-reg" style="flex:1; padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; background:transparent; color:#A0988A;">Вход</button>
+                <button type="button" class="auth-tab active" id="tab-reg-from-reg" style="flex:1; padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:0.85rem; background:linear-gradient(135deg, #B87333, #8B5A2B); color:#080604;">Регистрация</button>
             </div>
 
             <div class="auth-alert" id="register-alert"></div>
@@ -167,15 +174,15 @@
                     <span class="logo-text">АРКАИМ<span class="sub">VPN</span></span>
                 </a>
                 <h1 class="auth-title">Восстановление</h1>
-                <p class="auth-subtitle">Введите email для сброса пароля</p>
+                <p class="auth-subtitle">Введите логин или email для сброса пароля</p>
             </div>
 
             <div class="auth-alert" id="forgot-alert"></div>
 
             <form id="forgot-form">
                 <div class="form-group">
-                    <label class="form-label" for="forgot-email">Email</label>
-                    <input class="form-input" type="email" id="forgot-email" placeholder="warrior@example.com" required>
+                    <label class="form-label" for="forgot-email">Логин или Email</label>
+                    <input class="form-input" type="text" id="forgot-email" placeholder="Veb-tec или warrior@example.com" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-copper btn-full" id="forgot-btn">Отправить ссылку</button>
@@ -440,7 +447,7 @@
     </div>
 </footer>
 
-<script src="supabase-config.js"></script>
-<script src="account.js"></script>
+<script src="supabase-config.js?v=12"></script>
+<script src="account.js?v=12"></script>
 </body>
 </html>
