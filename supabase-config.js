@@ -403,6 +403,9 @@ async function getUserPayments(userId) {
 function getAuthErrorMessage(msg) {
     if (!msg) return 'Произошла ошибка. Попробуйте снова';
     const lower = msg.toLowerCase();
+    if (lower.includes('email logins are disabled') || lower.includes('email signups are disabled') || lower.includes('email_provider_disabled')) {
+        return '⚠️ В панели Supabase отключен провайдер Email! Зайдите в Authentication -> Providers -> Email и включите тумблер "Enable Email provider" (а тумблер "Confirm email" оставьте выключенным).';
+    }
     if (lower.includes('rate limit')) {
         return '⚠️ Исчерпан лимит отправки email Supabase. Отключите "Confirm email" в панели Supabase (Authentication -> Providers -> Email), чтобы пользователи создавались мгновенно!';
     }

@@ -20,6 +20,46 @@
     position: relative;
 }
 
+.auth-tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(18, 14, 10, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid var(--card-b);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 12px 18px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--stone);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    letter-spacing: 0.04em;
+}
+
+.auth-tab:hover {
+    color: var(--parch);
+    background: rgba(184, 115, 51, 0.08);
+}
+
+.auth-tab.active {
+    background: linear-gradient(135deg, var(--copper), var(--copper-d));
+    color: var(--black);
+    box-shadow: 0 4px 16px rgba(184, 115, 51, 0.35);
+}
+
 .auth-card {
     background: var(--card);
     border: 1px solid var(--card-b);

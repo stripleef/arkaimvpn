@@ -154,16 +154,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ===== SWITCH AUTH FORMS =====
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const authTabs = document.getElementById('auth-tabs');
+
     function showAuthCard(card) {
+        if (!authLogin || !authRegister || !authForgot) return;
         authLogin.style.display = 'none';
         authRegister.style.display = 'none';
         authForgot.style.display = 'none';
-        card.style.display = '';
+        card.style.display = 'block';
+
+        if (card === authLogin) {
+            tabLogin?.classList.add('active');
+            tabRegister?.classList.remove('active');
+            if (authTabs) authTabs.style.display = 'flex';
+        } else if (card === authRegister) {
+            tabRegister?.classList.add('active');
+            tabLogin?.classList.remove('active');
+            if (authTabs) authTabs.style.display = 'flex';
+        } else {
+            // forgot password card
+            tabLogin?.classList.remove('active');
+            tabRegister?.classList.remove('active');
+        }
+
         document.querySelectorAll('.auth-alert').forEach(a => {
             a.className = 'auth-alert';
             a.textContent = '';
         });
     }
+
+    tabLogin?.addEventListener('click', () => showAuthCard(authLogin));
+    tabRegister?.addEventListener('click', () => showAuthCard(authRegister));
 
     document.getElementById('show-register')?.addEventListener('click', (e) => {
         e.preventDefault();
